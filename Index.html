@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Bottin du RP - Crimson Gradient Edition</title>
+    <style>
+        /* FOND EN DÉGRADÉ DIAGONAL NOIR ET ROUGE */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #150000 40%, #4a0000 80%, #7a0000 100%);
+            background-attachment: fixed; /* Permet au dégradé de rester fixe pendant le scroll */
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ff3333;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 51, 51, 0.4);
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #cccccc;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* BARRE DE RECHERCHE SOMBRE SEMI-TRANSPARENTE POUR LAISSER PASSER LE DÉGRADÉ */
+        .search-box {
+            background-color: rgba(15, 15, 15, 0.75);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 51, 51, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .search-box input, .search-box select {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #331111;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            font-size: 1em;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .search-box input:focus, .search-box select:focus {
+            outline: none;
+            border-color: #ff3333;
+            box-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
+        }
+        
+        /* BOUTON D'AJOUT NOUVEAU DESIGN ROUGE */
+        .add-profile-btn {
+            background-color: #ff3333;
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(255, 51, 51, 0.3);
+        }
+        
+        .add-profile-btn:hover {
+            background-color: #cc0000;
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.6);
+        }
+
+        /* POP-UP DU FORMULAIRE */
+        .form-modal {
+            display: none; 
+            position: fixed; 
+            z-index: 150; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        
+        .form-container {
+            background-color: #0f0f0f;
+            border: 1px solid #ff3333;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(255, 51, 51, 0.3);
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            animation: fadeIn 0.3s;
+        }
+        
+        .form-container h2 {
+            margin-top: 0;
+            color: #ff3333;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #bbbbbb;
+        }
+        
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #222;
+            background-color: #000000;
+            color: white;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #ff3333;
+        }
+        
+        .form-group input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1) sepia(1) saturate(5) hue-rotate(320deg);
+            cursor: pointer;
+        }
+        
+        .form-group input[type="file"] {
+            background-color: #111;
+            border: 1px dashed #333;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        #previewContainer {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        #previewImg {
+            max-width: 100%;
+            max-height: 120px;
+            border-radius: 5px;
+            border: 1px solid #ff3333;
+        }
+        
+        .submit-btn {
+            background-color: #ff3333;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover {
+            background-color: #cc0000;
+        }
+
+        /* ZONE DES CARTES PROFILS */
+        .trombi {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+        }
+        
+        .card {
+            background-color: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            width: 280px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            position: relative;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #ff3333;
+            box-shadow: 0 5px 20px rgba(255, 51, 51, 0.4);
+        }
+        
+        .card img {
+            width: 100%;
+            height: 230px;
+            object-fit: cover;
+            filter: grayscale(10%);
+            transition: filter 0.2s;
+        }
+        
+        .card:hover img {
+            filter: grayscale(0%);
+        }
+        
+        .card-content {
+            padding: 15px;
+            background: linear-gradient(to bottom, rgba(15,15,15,0) 0%, rgba(5,5,5,0.9) 100%);
+        }
+        
+        .card-title {
+            font-size: 1.3em;
+            margin: 0 0 5px 0;
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+        
+        /* HARMONISATION DES BADGES */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 0.75em;
+            font-weight: bold;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .badge-civil { background-color: #ffffff; color: #000000; }
+        .badge-legal { background-color: #2f80ed; color: white; }
+        .badge-illegal { background-color: #ff3333; color: white; }
+        .badge-inconnu { background-color: #444444; color: white; }
+        
+        .info {
+            font-size: 0.9em;
+            margin: 5px 0;
+            color: #cccccc;
+        }
+        
+        .info strong {
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .description {
+            margin-top: 10px;
+            font-style: italic;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 10px;
+            font-size: 0.9em;
+            color: #aaaaaa;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #ff3333;
+            color: #ff3333;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 10;
+            transition: background 0.2s, color 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background-color: #ff3333;
+            color: #ffffff;
+        }
+
+        /* POP-UP FICHE DÉTAILLÉE */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 100; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .modal-content {
+            background-color: #0a0a0a;
+            border: 1px solid #ff3333;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.3);
+            position: relative;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #ffffff;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 160;
+            transition: color 0.2s;
+        }
+        
+        .modal-close:hover {
+            color: #ff3333;
+        }
+        
+        .modal-img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .modal-body h2 {
+            margin-top: 0;
+            color: #ffffff;
+            font-size: 1.8em;
+            letter-spacing: 1px;
+        }
+        
+        .modal-desc {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            line-height: 1.6;
+            color: #e0e0e0;
+            font-size: 1.05em;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📋 Le Bottin du Roleplay</h1>
+    <p class="subtitle">Clique sur un profil pour ouvrir sa fiche détaillée</p>
+
+    <div class="container">
+        <!-- RECHERCHE + BOUTON NOUVEAU PROFIL -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Rechercher un nom, métier, hobby...">
+            <select id="filterGroup">
+                <option value="all">Tous les groupes</option>
+                <option value="civil">Civils</option>
+                <option value="legal">Légal (Police, EMS...)</option>
+                <option value="illegal">Illégal (Gangs, Orga...)</option>
+                <option value="inconnu">Inconnus / Autres</option>
+            </select>
+            <button class="add-profile-btn" id="openFormBtn">➕ Ajouter un profil</button>
+        </div>
+
+        <!-- FENÊTRE POP-UP DU FORMULAIRE -->
+        <div id="formModal" class="form-modal">
+            <div class="form-container">
+                <span class="modal-close" id="closeFormBtn">&times;</span>
+                <h2>Ajouter un nouveau profil</h2>
+                <form id="rpForm">
+                    <div class="form-group">
+                        <label for="name">Nom / Surnom * :</label>
+                        <input type="text" id="name" required placeholder="Ex: John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="group">Groupe / Faction :</label>
+                        <select id="group">
+                            <option value="civil">Civil</option>
+                            <option value="legal">Légal (LSPD, EMS, Justice...)</option>
+                            <option value="illegal">Illégal (Gang, Mafia...)</option>
+                            <option value="inconnu">Inconnu / Suspect</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthdate">Date de naissance :</label>
+                        <input type="date" id="birthdate">
+                    </div>
+                    <div class="form-group">
+                        <label for="job">Métier :</label>
+                        <input type="text" id="job" placeholder="Ex: Mécano">
+                    </div>
+                    <div class="form-group">
+                        <label for="hobbies">Hobbies / Signes distinctifs :</label>
+                        <input type="text" id="hobbies" placeholder="Ex: Tatouage cou, conduit une Sultan">
+                    </div>
+                    <div class="form-group">
+                        <label for="photoFile">Photo du personnage :</label>
+                        <input type="file" id="photoFile" accept="image/*">
+                        <div id="previewContainer">
+                            <img id="previewImg" src="" alt="Aperçu">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="desc">Notes de rencontre :</label>
+                        <textarea id="desc" placeholder="Raconte ton histoire avec ce perso..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Enregistrer le profil</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ZONE AFFICHAGE DES CARTES -->
+        <div class="trombi" id="trombiZone"></div>
+    </div>
+
+    <!-- POP-UP AFFICHAGE FICHE DÉTAILLÉE -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeModal">&times;</span>
+            <img id="modalImg" class="modal-img" src="" alt="Photo">
+            <div class="modal-body">
+                <h2 id="modalName">Nom</h2>
+                <span id="modalBadge" class="badge">Groupe</span>
+                <div id="modalBirthdate" class="info"></div>
+                <div id="modalJob" class="info"></div>
+                <div id="modalHobbies" class="info"></div>
+                <p id="modalDesc" class="modal-desc"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rpForm = document.getElementById('rpForm');
+        const trombiZone = document.getElementById('trombiZone');
+        const searchInput = document.getElementById('searchInput');
+        const filterGroup = document.getElementById('filterGroup');
+        const photoFileInput = document.getElementById('photoFile');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImg = document.getElementById('previewImg');
+
+        // Modals
+        const profileModal = document.getElementById('profileModal');
+        const closeModal = document.getElementById('closeModal');
+        
+        const formModal = document.getElementById('formModal');
+        const openFormBtn = document.getElementById('openFormBtn');
+        const closeFormBtn = document.getElementById('closeFormBtn');
+
+        let db;
+
+        // Base de données IndexedDB
+        const request = indexedDB.open("RP_Database", 1);
+        request.onupgradeneeded = function(e) {
+            db = e.target.result;
+            if (!db.objectStoreNames.contains("profiles")) {
+                db.createObjectStore("profiles", { keyPath: "id" });
+            }
+        };
+        request.onsuccess = function(e) {
+            db = e.target.result;
+            displayProfiles();
+        };
+
+        openFormBtn.addEventListener('click', () => formModal.style.display = "flex");
+        closeFormBtn.addEventListener('click', () => {
+            formModal.style.display = "none";
+            rpForm.reset();
+            previewContainer.style.display = "none";
+        });
+
+        // Calcul âge + format
+        function getAgeAndDateString(birthdateValue) {
+            if (!birthdateValue) return { fullString: "Inconnue", age: "" };
+
+            const birthDate = new Date(birthdateValue);
+            const today = new Date();
+            
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            const day = String(birthDate.getDate()).padStart(2, '0');
+            const month = String(birthDate.getMonth() + 1).padStart(2, '0');
+            const year = birthDate.getFullYear();
+            
+            return {
+                fullString: `${day}/${month}/${year} (${age} ans)`,
+                age: age
+            };
+        }
+
+        photoFileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewContainer.style.display = "block";
+                }
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = "none";
+            }
+        });
+
+        rpForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const group = document.getElementById('group').value;
+            const birthdate = document.getElementById('birthdate').value;
+            const job = document.getElementById('job').value || "Non spécifié";
+            const hobbies = document.getElementById('hobbies').value || "Aucun";
+            const desc = document.getElementById('desc').value || "Aucune note.";
+            const file = photoFileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    saveToDB(name, group, birthdate, job, hobbies, reader.result, desc);
+                }
+                reader.readAsDataURL(file);
+            } else {
+                saveToDB(name, group, birthdate, job, hobbies, "https://via.placeholder.com/300x250?text=Pas+de+photo", desc);
+            }
+        });
+
+        function saveToDB(name, group, birthdate, job, hobbies, photo, desc) {
+            const profile = { id: Date.now(), name, group, birthdate, job, hobbies, photo, desc };
+            const transaction = db.transaction(["profiles"], "readwrite");
+            const store = transaction.objectStore("profiles");
+            store.add(profile).onsuccess = function() {
+                rpForm.reset();
+                previewContainer.style.display = "none";
+                formModal.style.display = "none";
+                displayProfiles();
+            };
+        }
+
+        function displayProfiles() {
+            if (!db) return;
+            trombiZone.innerHTML = "";
+
+            const transaction = db.transaction(["profiles"], "readonly");
+            const store = transaction.objectStore("profiles");
+            
+            store.getAll().onsuccess = function(e) {
+                const profiles = e.target.result;
+                const searchText = searchInput.value.toLowerCase();
+                const selectedGroup = filterGroup.value;
+
+                profiles.forEach(profile => {
+                    const matchesSearch = profile.name.toLowerCase().includes(searchText) || 
+                                          profile.job.toLowerCase().includes(searchText) || 
+                                          profile.hobbies.toLowerCase().includes(searchText);
+                    const matchesGroup = selectedGroup === "all" || profile.group === selectedGroup;
+
+                    if (matchesSearch && matchesGroup) {
+                        const card = document.createElement('div');
+                        card.classList.add('card');
+                        
+                        let groupLabel = "Inconnu";
+                        if(profile.group === "civil") groupLabel = "Civil";
+                        if(profile.group === "legal") groupLabel = "Légal";
+                        if(profile.group === "illegal") groupLabel = "Illégal";
+
+                        const dateInfos = getAgeAndDateString(profile.birthdate);
+
+                        card.innerHTML = `
+                            <button class="delete-btn" title="Supprimer le profil">&times;</button>
+                            <img src="${profile.photo}" alt="Photo">
+                            <div class="card-content">
+                                <div class="card-title">${profile.name}</div>
+                                <span class="badge badge-${profile.group}">${groupLabel}</span>
+                                <div class="info"><strong>Naissance :</strong> ${dateInfos.fullString}</div>
+                                <div class="info"><strong>Métier :</strong> ${profile.job}</div>
+                                <div class="info"><strong>Hobbies :</strong> ${profile.hobbies}</div>
+                                <p class="description">${profile.desc}</p>
+                            </div>
+                        `;
+
+                        card.addEventListener('click', function(event) {
+                            if (!event.target.classList.contains('delete-btn')) {
+                                openProfileModal(profile, groupLabel, dateInfos.fullString);
+                            }
+                        });
+
+                        card.querySelector('.delete-btn').addEventListener('click', function(event) {
+                            event.stopPropagation();
+                            deleteProfile(profile.id);
+                        });
+
+                        trombiZone.appendChild(card);
+                    }
+                });
+            };
+        }
+
+        function openProfileModal(profile, groupLabel, fullDateString) {
+            document.getElementById('modalImg').src = profile.photo;
+            document.getElementById('modalName').innerText = profile.name;
+            
+            const badge = document.getElementById('modalBadge');
+            badge.innerText = groupLabel;
+            badge.className = `badge badge-${profile.group}`;
+
+            document.getElementById('modalBirthdate').innerHTML = `<strong>Date de naissance :</strong> ${fullDateString}`;
+            document.getElementById('modalJob').innerHTML = `<strong>Métier :</strong> ${profile.job}`;
+            document.getElementById('modalHobbies').innerHTML = `<strong>Hobbies :</strong> ${profile.hobbies}`;
+            document.getElementById('modalDesc').innerText = profile.desc;
+
+            profileModal.style.display = "flex";
+        }
+
+        closeModal.addEventListener('click', () => profileModal.style.display = "none");
+        
+        window.addEventListener('click', (e) => { 
+            if (e.target === profileModal) profileModal.style.display = "none"; 
+            if (e.target === formModal) {
+                formModal.style.display = "none";
+                rpForm.reset();
+                previewContainer.style.display = "none";
+            }
+        });
+
+        function deleteProfile(id) {
+            if(confirm("Supprimer définitivement ce profil ?")) {
+                db.transaction(["profiles"], "readwrite").objectStore("profiles").delete(id).onsuccess = function() {
+                    displayProfiles();
+                };
+            }
+        }
+
+        searchInput.addEventListener('input', displayProfiles);
+        filterGroup.addEventListener('change', displayProfiles);
+    </script>
+</body>
+</html>
